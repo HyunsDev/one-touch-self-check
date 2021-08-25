@@ -1,0 +1,34 @@
+$mainColor: #0067F9;
+
+.main {
+    position: relative;
+}
+
+.bottoms {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    padding: 20px;
+    box-sizing: border-box;
+
+    p {
+        font-size: 14px;
+        color: $mainColor;
+        font-weight: 800;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .main-btn {
+        margin-top: 24px;
+        background-color: $mainColor;
+        border-radius: 8px;
+        padding: 12px 8px;
+        font-weight: 800;
+        font-size: 14px;
+        text-align: center;
+        color: #ffffff;
+    }
+}

@@ -1,0 +1,16 @@
+$mainColor: #0067F9;
+
+.Bar {
+    top: calc(50vh - 200px);
+    position: fixed;
+    height: 130px;
+    width: 700px;
+    background-color: $mainColor;
+    transition: 400ms;
+}
+
+.Bar-diagonal {
+    top: calc(50vh - 200px);
+    left: -200px;
+    transform: rotate(30deg);
+}
