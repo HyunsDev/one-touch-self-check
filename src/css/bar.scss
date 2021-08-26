@@ -1,16 +1,93 @@
 $mainColor: #0067F9;
 
-.Bar {
-    top: calc(50vh - 200px);
+.bar-divver {
     position: fixed;
-    height: 130px;
-    width: 700px;
+    flex-direction: column;
+    top: 0;
+    left: -100vw;
+    right: 0;
+    width: 300vw;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30vh;
+
+    p {
+        margin-top: 4px;
+        color: #bbc7d8;
+        font-size: 12px;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(359deg); }
+}
+
+.Bar {
     background-color: $mainColor;
-    transition: 400ms;
+    transition: 800ms;
+    height: 130px;
+    width: 300vw;
+    transform: rotate(0deg);
+    transform-origin: center;
+    border-top-right-radius: 65px;
+    border-bottom-right-radius: 65px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .loader {
+        z-index: 100;
+        border: 10px solid #ffffff;
+        border: {
+            right-color: #ffffff;
+            top-color: rgba(255,255,255, 0.6);
+            radius: 100%;
+          }
+        margin-right: 15px;
+        height: 80px;
+        width: 80px;
+        animation: spin 800ms infinite linear;
+    }
 }
 
 .Bar-diagonal {
-    top: calc(50vh - 200px);
-    left: -200px;
     transform: rotate(30deg);
+}
+
+@keyframes loading-move {
+    0% {
+        margin-left: calc(-20vw + 0px);
+    }
+    25% {
+        margin-top: 10px;
+    }
+    50% {
+        margin-left: calc(-20vw - 40px);
+    }
+    75% {
+        margin-top: -10px;
+    }
+    100% {
+        margin-left: calc(-20vw + 0px);
+    }
+}
+.Bar-loading {
+    transform: rotate(0deg);
+    width: 80vw;
+    margin-left: -20vw;
+    animation: loading-move 1000ms infinite ease-in-out;
+}
+
+.Bar-success {
+    transform: rotate(0deg);
+    width: 130px;
+    border-radius: 65px;
+
+    .loader {
+        border-color:rgba(255, 255, 255, 1);
+    }
 }
