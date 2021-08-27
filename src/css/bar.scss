@@ -58,28 +58,33 @@ $mainColor: #0067F9;
     transform: rotate(30deg);
 }
 
+.Bar-setting-1 {
+    margin-top: -20px;
+}
+
+.Bar-setting-2 {
+    margin-top: -10px;
+}
+
+.Bar-setting-3 {
+    margin-top: 0px;
+}
+
 @keyframes loading-move {
     0% {
-        margin-left: calc(-20vw + 0px);
+        margin-top: 0px;
     }
-    25% {
-        margin-top: 10px;
-    }
-    50% {
-        margin-left: calc(-20vw - 40px);
-    }
-    75% {
-        margin-top: -10px;
-    }
+
     100% {
-        margin-left: calc(-20vw + 0px);
+        margin-top: 5px
     }
 }
+
 .Bar-loading {
     transform: rotate(0deg);
     width: 80vw;
     margin-left: -20vw;
-    animation: loading-move 1000ms infinite ease-in-out;
+    animation: loading-move 700ms infinite ease-in-out alternate;
 }
 
 .Bar-success {

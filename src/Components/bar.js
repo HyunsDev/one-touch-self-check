@@ -3,20 +3,33 @@ import "../css/bar.scss"
 
 function Bar(props){
     const [status, setStatus] = useState("")
+    const [text, setText] = useState("")
     useEffect(() => {
-        if (props.status == "main") {
+        setText(props.text)
+        if (props.status === "main") {
             setStatus("Bar-diagonal")
-        } else if (props.status == "setting") {
-            setStatus("Bar-line")
-        } else if (props.status == "loading") {
+        } else if (props.status === "setting-1") {
+            setStatus("Bar-setting-1")
+        } else if (props.status === "setting-2") {
+            setStatus("Bar-setting-2")
+        } else if (props.status === "setting-3") {
+            setStatus("Bar-setting-3")
+        } else if (props.status === "loading") {
             setStatus("Bar-loading")
+        } else if (props.status === "success") {
+            setStatus("Bar-success")
         } else {
             setStatus("")
         }
-    }, [props.status])
+    }, [props.text, props.status])
 
     return (
-        <div className={"Bar " + (status || "")}></div>
+        <div className="bar-divver">
+            <div className={"Bar " + (status || "")}>
+                <div className="loader"></div>
+            </div>
+            <p>{text}</p>
+        </div>
     )
 }
 

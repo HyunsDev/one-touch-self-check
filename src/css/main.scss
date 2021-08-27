@@ -1,4 +1,6 @@
 $mainColor: #0067F9;
+$mainColor-active: #0059d4;
+$mainColor-disable: #CDD5E1;
 
 .main {
     position: relative;
@@ -18,10 +20,33 @@ $mainColor: #0067F9;
     }
 
     h1 {
+        word-break: keep-all;
         font-size: 24px;
     }
 
+    .btns {
+        input[type=text] {
+            margin-top: 12px;
+            border: 0;
+            border-bottom: solid 1px #CDD5E1;
+            display: block;
+            width: 100%;
+            outline: none;
+            box-sizing: border-box;
+            padding: 4px;
+            font-size: 24px;
+            font-weight: 800;
+
+            &::placeholder {
+                color: #CDD5E1;
+            }
+        }
+    }
+
     .main-btn {
+        word-break: keep-all;
+        cursor: pointer;
+        box-sizing: border-box;
         margin-top: 24px;
         background-color: $mainColor;
         border-radius: 8px;
@@ -30,5 +55,21 @@ $mainColor: #0067F9;
         font-size: 14px;
         text-align: center;
         color: #ffffff;
+        width: 100%;
+        -webkit-tap-highlight-color : transparent;
+        transition: 100ms;
+
+        &:active {
+            background-color: $mainColor-active;
+        }
+    }
+
+    .disable {
+        cursor: default;
+        background-color: $mainColor-disable;
+
+        &:active {
+            background-color: $mainColor-disable;
+        }
     }
 }
