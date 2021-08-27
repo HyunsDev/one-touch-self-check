@@ -5,8 +5,14 @@ $mainColor: #0067F9;
     box-sizing: border-box;
     font-weight: 800;
     font-size: 14px;
+    z-index: 99999;
 
     span {
         color: $mainColor;
+    }
+
+    a {
+        color: #000;
+        text-decoration: none;
     }
 }

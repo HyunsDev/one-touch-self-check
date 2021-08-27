@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"
 import Header from "../Components/header.js";
 import Bar from "../Components/bar";
 import "../css/main.scss";
+import { toast } from 'react-toastify';
+import dotenv from 'dotenv';
+dotenv.config()
 
 function App(props){
     
@@ -22,9 +26,17 @@ function App(props){
         <h1>터치 한 번으로<br />자가진단을 완료해보세요!</h1>
     </>)
 
+    useEffect(() => {
+        console.log(localStorage.getItem("isSet"))
+        if (localStorage.getItem("isSet")) {
+            setBottom(<Loading />)
+        }
+    }, []) 
+
+
     // 컴포넌트
     function Step1() {
-        const [inputValue, setInputValue] = useState("")
+        const [inputValue, setInputValue] = useState(localStorage.getItem("name") || "")
         const inputRef = React.useRef(null);
 
         useEffect(() => {
@@ -37,8 +49,8 @@ function App(props){
                 isAble: false,
                 function: null
             })
-
             inputRef.current.focus();
+            onInputChange(inputValue)
         }, [])
         
         const onInputChange = (value) => {
@@ -67,6 +79,7 @@ function App(props){
                 })
             }
         }
+        
 
         const onEnter = (e) => {
             if (e.key === "Enter") {
@@ -90,7 +103,7 @@ function App(props){
 
     // 생년월일
     function Step2() {
-        const [inputValue, setInputValue] = useState("")
+        const [inputValue, setInputValue] = useState(localStorage.getItem("birth") || "")
         const inputRef = React.useRef(null);
 
         useEffect(() => {
@@ -104,6 +117,7 @@ function App(props){
                 function: null
             })
             inputRef.current.focus();
+            onInputChange(inputValue)
         }, [])
         
         const onInputChange = (value) => {
@@ -155,7 +169,7 @@ function App(props){
 
     // 비밀번호
     function Step3() {
-        const [inputValue, setInputValue] = useState("")
+        const [inputValue, setInputValue] = useState(localStorage.getItem("password") || "")
         const inputRef = React.useRef(null);
 
         useEffect(() => {
@@ -169,6 +183,7 @@ function App(props){
                 function: null
             })
             inputRef.current.focus();
+            onInputChange(inputValue)
         }, [])
         
         const onInputChange = (value) => {
@@ -185,7 +200,7 @@ function App(props){
                     isAble: true,
                     function: () => {
                         localStorage.setItem("password", value)
-                        setBottom(<Loading />)
+                        setBottom(<Loading isNew={true} />)
                     }
                 })
                 
@@ -202,7 +217,7 @@ function App(props){
             if (e.key === "Enter") {
                 if (/^\d\d\d\d$/.test(inputValue)) {
                     localStorage.setItem("password", inputValue)
-                    setBottom(<Loading />)
+                    setBottom(<Loading isNew={true} />)
                 }
             }
         }
@@ -218,20 +233,79 @@ function App(props){
         )
     }
 
-    function Loading() {
+    // 로딩
+    function Loading(props) {
         useEffect(() => {
-            setBarStatus({
-                status: "loading",
-                text: "자가진단 정보는 이 브라우저에 저장됩니다."
-            })
-            setBtnStatus({
-                text: "잠시 기다려주세요",
-                isAble: false,
-                // function: null
-                function: () => {
-                    setBottom(<Done isNew={false} />)
+            ;(async () => {
+                setBarStatus({
+                    status: "loading",
+                    text: "자가진단 정보는 이 브라우저에 저장됩니다."
+                })
+                setBtnStatus({
+                    text: "잠시 기다려주세요",
+                    isAble: false,
+                    // function: null
+                    function: null
+                })
+    
+                try {
+                    console.log(process.env.REACT_APP_API_SERVER)
+                    await axios.post(`${process.env.REACT_APP_API_SERVER}/v1/check`, {
+                        name: localStorage.getItem("name"),
+                        birth: localStorage.getItem("birth"),
+                        password: localStorage.getItem("password")
+                    })
+                    localStorage.setItem("isSet", true)
+                    setBottom(<Done isNew={props.isNew || false} />)
+
+                } catch (err) {
+                    localStorage.setItem("isSet", false)
+                    console.error(err)
+                    if (err.response) {
+                        switch (err.response) {
+                            case "need_more_info":
+                                toast.error("필수 정보가 누락되었어요", { theme: "colored" })
+                                localStorage.clear()
+                                setBottom(<Step1 />)
+                                break
+    
+                            case "first_login_failed":
+                                toast.error("이름과 생년월일을 확인하세요", { theme: "colored" })
+                                localStorage.clear()
+                                setBottom(<Step1 />)
+                                break
+    
+                            case "second_login_failed":
+                                toast.error("비밀번호를 확인하세요!", { theme: "colored" })
+                                localStorage.setItem("password", "")
+                                setBottom(<Step3 />)
+                                break
+                            
+                            case "wait_please":
+                                toast.error(`${err.response.data.minutes}분후에 재시도해주세요`, { theme: "colored" })
+                                setBottom(<Step3 />)
+                                break
+    
+                            case "wrong_password":
+                                toast.error("비밀번호를 확인하세요!", { theme: "colored" })
+                                localStorage.setItem("password", "")
+                                setBottom(<Step3 />)
+                                break
+
+                            default:
+                                toast.error("서버 연결에 실패했어요. 다시 시도해주세요", { theme: "colored" })
+                                setBottom(<Step3 />)
+                                break
+                        }
+                    } else if (err.request) {
+                        toast.error("서버 연결에 실패했어요. 다시 시도해주세요", { theme: "colored" })
+                        setBottom(<Step3 />)
+                    } else {
+                        toast.error("서버 연결에 실패했어요. 다시 시도해주세요", { theme: "colored" })
+                        setBottom(<Step3 />)
+                    }
                 }
-            })
+            })()
         }, [])
         
 
@@ -243,6 +317,7 @@ function App(props){
         )
     }
 
+    // 완료
     function Done(props) {
         useEffect(() => {
             setBarStatus({
@@ -259,7 +334,9 @@ function App(props){
                 let count = 4
                 const timer = setInterval(() => {
                     count = count - 1
+                    console.log(count)
                     if (count < 1) {
+                        clearInterval(timer)
                         window.close()
                     }
                     setBtnStatus({
@@ -275,10 +352,6 @@ function App(props){
                         }
                     })
                 }, 1000)
-
-
-
-
             }
         }, [props.isNew])
 

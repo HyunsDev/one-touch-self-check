@@ -11,12 +11,16 @@ $mainColor: #0067F9;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 30vh;
+    margin-top: 30vh;
+    z-index: 0;
 
     p {
+        cursor: pointer;
+        z-index: 999;
         margin-top: 4px;
         color: #bbc7d8;
         font-size: 12px;
+        text-decoration: underline;
     }
 }
 
@@ -40,6 +44,7 @@ $mainColor: #0067F9;
     justify-content: flex-end;
 
     .loader {
+        transition: 800ms;
         z-index: 100;
         border: 10px solid #ffffff;
         border: {
@@ -87,12 +92,89 @@ $mainColor: #0067F9;
     animation: loading-move 700ms infinite ease-in-out alternate;
 }
 
+@keyframes success-bar-key {
+    0% {
+        width: 80vw;
+        margin-left: -20vw;
+    }
+
+    30% {
+        width: 300vw;
+        margin-left: 0;
+    }
+
+    100% {
+        width: 130px;
+    }
+}
+
+@keyframes success-circle-key {
+    0% {
+        stroke-dashoffset: 600;
+        opacity: 1;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes success-check-key {
+    0% {
+        stroke-dashoffset: -124;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
 .Bar-success {
+    border-radius: 85px;
     transform: rotate(0deg);
-    width: 130px;
-    border-radius: 65px;
+    animation: success-bar-key 1000ms cubic-bezier(0.62, 0.13, 0, 0.82);
+    animation-fill-mode: forwards;
 
     .loader {
         border-color:rgba(255, 255, 255, 1);
     }
+
+    svg {
+        polyline {
+            stroke-dasharray: 124;
+            stroke-dashoffset: -124;
+            animation: success-check-key 250ms 1200ms cubic-bezier(1, 0.16, 0, 0.93);
+            animation-fill-mode: forwards;
+        }
+
+        circle {
+            opacity: 0;
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            transform-origin: center;
+            transform: rotate(327deg);
+            animation: success-circle-key 400ms 1650ms cubic-bezier(0.8, 0.28, 0.2, 0.76);
+            animation-fill-mode: forwards;
+        }
+    }
+}
+
+
+@keyframes success-loader-disappear {
+    0% {
+        opacity: 1;
+        display: block;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
+
+.loader-disappear {
+    animation: success-loader-disappear 500ms;
+    display: none;
+    opacity: 0;
 }
