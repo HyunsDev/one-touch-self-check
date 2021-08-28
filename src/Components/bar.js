@@ -33,11 +33,11 @@ function Bar(props) {
                     <circle cx="128" cy="128" r="96" fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></circle>
                     </svg> : <></>}
             </div>
-            <p onClick={() => {
+            {/* <p onClick={() => { 
                 console.log("유저 변경")
                 localStorage.clear()
                 window.location.replace("/")
-            }}>{text}</p>
+            }}>{text}</p> */}
         </div>
     )
 }

@@ -27,7 +27,7 @@ function App(props){
     </>)
 
     useEffect(() => {
-        console.log(localStorage.getItem("isSet"))
+        console.log(localStorage.getItem("isSet") === true)
         if (localStorage.getItem("isSet")) {
             setBottom(<Loading />)
         }
@@ -239,7 +239,7 @@ function App(props){
             ;(async () => {
                 setBarStatus({
                     status: "loading",
-                    text: "자가진단 정보는 이 브라우저에 저장됩니다."
+                    text: ""
                 })
                 setBtnStatus({
                     text: "잠시 기다려주세요",
@@ -250,7 +250,7 @@ function App(props){
     
                 try {
                     console.log(process.env.REACT_APP_API_SERVER)
-                    await axios.post(`${process.env.REACT_APP_API_SERVER}/v1/check`, {
+                    await axios.post(`http://192.168.0.19:3001/v1/check`, {
                         name: localStorage.getItem("name"),
                         birth: localStorage.getItem("birth"),
                         password: localStorage.getItem("password")
@@ -262,7 +262,8 @@ function App(props){
                     localStorage.setItem("isSet", false)
                     console.error(err)
                     if (err.response) {
-                        switch (err.response) {
+                        console.error(err.response)
+                        switch (err.response.data.code) {
                             case "need_more_info":
                                 toast.error("필수 정보가 누락되었어요", { theme: "colored" })
                                 localStorage.clear()
@@ -293,7 +294,7 @@ function App(props){
                                 break
 
                             default:
-                                toast.error("서버 연결에 실패했어요. 다시 시도해주세요", { theme: "colored" })
+                                toast.error("자가진단을 하지 못했어요. 다시 시도해주세요", { theme: "colored" })
                                 setBottom(<Step3 />)
                                 break
                         }
@@ -301,7 +302,7 @@ function App(props){
                         toast.error("서버 연결에 실패했어요. 다시 시도해주세요", { theme: "colored" })
                         setBottom(<Step3 />)
                     } else {
-                        toast.error("서버 연결에 실패했어요. 다시 시도해주세요", { theme: "colored" })
+                        toast.error("문제가 생겼어요. ", { theme: "colored" })
                         setBottom(<Step3 />)
                     }
                 }
@@ -326,39 +327,46 @@ function App(props){
             })
             if (props.isNew) {
                 setBtnStatus({
-                    text: "원터치을 위해 홈 화면에 아이콘 추가하기",
-                    isAble: true,
+                    text: "원터치을 위해 홈 화면에 바로가기를 추가해주세요!",
+                    isAble: false,
                     function: null
                 })
             } else {
-                let count = 4
-                const timer = setInterval(() => {
-                    count = count - 1
-                    console.log(count)
-                    if (count < 1) {
-                        clearInterval(timer)
-                        window.close()
-                    }
-                    setBtnStatus({
-                        text: `${count}초 뒤에 창을 닫을게요`,
-                        isAble: true,
-                        function: () => {
-                            clearInterval(timer)
-                            setBtnStatus({
-                                text: `자동 창 닫기를 취소했어요`,
-                                isAble: false,
-                                function: null
-                            })
-                        }
-                    })
-                }, 1000)
+                setBtnStatus({
+                    text: `이제 앱을 닫아주세요`,
+                    isAble: false,
+                    function: null
+                })
+                // let count = 4
+                // const timer = setInterval(() => {
+                //     count = count - 1
+                //     if (count < 1) {
+                //         clearInterval(timer)
+                //         window.close()
+                //     }
+                //     setBtnStatus({
+                //         text: `${count}초 뒤에 창을 닫을게요`,
+                //         isAble: false,
+                //         function: () => {
+                //             clearInterval(timer)
+                //             window.close()
+                //             setBtnStatus({
+                //                 text: `자동 창 닫기를 취소했어요`,
+                //                 isAble: false,
+                //                 function: null
+                //             })
+                //         }
+                //     })
+                // }, 1000)
             }
         }, [props.isNew])
 
         return (
             <>
-                <p>원터치 자가진단</p>
-                <h1>{props.isNew ? "원터치 자가진단 등록이 완료되었어요!" : "자가진단이 완료되었어요."}</h1>
+                <p onClick={() => {localStorage.clear(); window.location.replace("/")}}>
+                    {localStorage.getItem("name")}({localStorage.getItem("birth")})
+                </p>
+                <h1>{props.isNew ? "원터치 자가진단이 완료되었어요!" : "자가진단이 완료되었어요."}</h1>
             </>
         )
     }

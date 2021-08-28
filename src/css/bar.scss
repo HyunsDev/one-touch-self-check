@@ -3,7 +3,7 @@ $mainColor: #0067F9;
 .bar-divver {
     position: fixed;
     flex-direction: column;
-    top: 0;
+    bottom: 0;
     left: -100vw;
     right: 0;
     width: 300vw;
@@ -11,12 +11,12 @@ $mainColor: #0067F9;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 30vh;
+    
     z-index: 0;
 
     p {
         cursor: pointer;
-        z-index: 999;
+        z-index: 4;
         margin-top: 4px;
         color: #bbc7d8;
         font-size: 12px;
@@ -30,6 +30,7 @@ $mainColor: #0067F9;
 }
 
 .Bar {
+    z-index: 3;
     background-color: $mainColor;
     transition: 800ms;
     height: 130px;
@@ -42,6 +43,7 @@ $mainColor: #0067F9;
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    margin-bottom: 50vh;
 
     .loader {
         transition: 800ms;
@@ -64,15 +66,15 @@ $mainColor: #0067F9;
 }
 
 .Bar-setting-1 {
-    margin-top: -20px;
+    margin-bottom: 100vh;
 }
 
 .Bar-setting-2 {
-    margin-top: -10px;
+    margin-bottom: 100vh;
 }
 
 .Bar-setting-3 {
-    margin-top: 0px;
+    margin-bottom: 100vh;
 }
 
 @keyframes loading-move {
