@@ -108,7 +108,7 @@ yarn-error.log*
 /coverage
 
 # production
-# /build
+/build
 
 # misc
 .DS_Store
