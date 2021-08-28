@@ -249,8 +249,8 @@ function App(props){
                 })
     
                 try {
-                    console.log(process.env.REACT_APP_API_SERVER)
-                    await axios.post(`http://192.168.0.19:3001/v1/check`, {
+                    // console.log(process.env.REACT_APP_API_SERVER)
+                    await axios.post(`${process.env.REACT_APP_API_SERVER}/v1/check`, {
                         name: localStorage.getItem("name"),
                         birth: localStorage.getItem("birth"),
                         password: localStorage.getItem("password")
