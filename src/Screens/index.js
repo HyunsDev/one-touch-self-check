@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-// import axios from "axios"
+import axios from "axios"
 import Header from "../Components/header.js";
 import Bar from "../Components/bar";
 import "../css/main.scss";
 import { toast } from 'react-toastify';
-import hcs from 'hcs.js';
 import dotenv from 'dotenv';
 dotenv.config()
 
@@ -250,83 +249,61 @@ function App(props){
                 })
     
                 try {
-                    // console.log(process.env.REACT_APP_API_SERVER)
-                    // await axios.post(`${process.env.REACT_APP_API_SERVER}/v1/check`, {
-                    //     name: localStorage.getItem("name"),
-                    //     birth: localStorage.getItem("birth"),
-                    //     password: localStorage.getItem("password")
-                    // })
-                    const name = localStorage.getItem("name")
-                    const birth = localStorage.getItem("birth")
-                    const password = localStorage.getItem("password")
-
-                    const schools = await hcs.searchSchool("서령고등학교")
-                    if (schools.length !== 1) {
-                        toast.error("검색된 학교가 이상해요, 박현우에게 문의해주세요", { theme: "colored" })
-                        localStorage.clear()
-                        setBottom(<Step1 />)
-                        return
-                    }
-                    const school = schools[0]
-
-                    const login = await hcs.login(school.endpoint, school.schoolCode, name, birth)
-                    if (!login.success) {
-                        toast.error("이름과 생년월일을 확인하세요", { theme: "colored" })
-                        localStorage.clear()
-                        setBottom(<Step1 />)
-                        return
-                    }
-                    if (login.agreementRequired) {
-                        toast.info("개인정보처리방침에 자동으로 동의했어요", { theme: "colored" })
-                        await hcs.updateAgreement(school.endpoint, login.token)
-                    }
-
-                    let secondLogin
-                    let count = 0
-                    while (true) {
-                        try {
-                            secondLogin = await hcs.secondLogin(school.endpoint, login.token, password)
-                        break
-                        } catch (err) {
-                            console.error(err)
-                            count = count + 1
-                            console.log(`${count}차 시도`)
-                            if (count > 3) {
-                                toast.error("비밀번호를 확인하세요!", { theme: "colored" })
-                                localStorage.setItem("password", "")
-                                setBottom(<Step3 />)
-                                return
-                            }
-                        }
-                    }
-
-                    if (!secondLogin.success) {
-                        if (secondLogin.remainingMinutes) {
-                            toast.error(`${secondLogin.remainingMinutes}분후에 재시도해주세요`, { theme: "colored" })
-                            setBottom(<Step3 />)
-                            return
-                        }
-                        toast.error("비밀번호를 확인하세요!", { theme: "colored" })
-                        localStorage.setItem("password", "")
-                        setBottom(<Step3 />)
-                        return
-                    }
-
-                    const survey = {
-                    Q1: false,
-                    Q2: false,
-                    Q3: false,
-                    }
-                    await hcs.registerSurvey(school.endpoint, secondLogin.token, survey)
+                    await axios.post(`${process.env.REACT_APP_API_SERVER}/v1/check`, {
+                        name: localStorage.getItem("name"),
+                        birth: localStorage.getItem("birth"),
+                        password: localStorage.getItem("password")
+                    })
                     localStorage.setItem("isSet", true)
                     setBottom(<Done isNew={props.isNew || false} />)
 
                 } catch (err) {
                     localStorage.setItem("isSet", false)
                     console.error(err)
-                    toast.error("문제가 생겼어요. ", { theme: "colored" })
-                    setBottom(<Step3 />)
-                    
+                    if (err.response) {
+                        console.error(err.response)
+                        switch (err.response.data.code) {
+                            case "need_more_info":
+                                toast.error("필수 정보가 누락되었어요", { theme: "colored" })
+                                localStorage.clear()
+                                setBottom(<Step1 />)
+                                break
+    
+                            case "first_login_failed":
+                                toast.error("이름과 생년월일을 확인하세요", { theme: "colored" })
+                                localStorage.clear()
+                                setBottom(<Step1 />)
+                                break
+    
+                            case "second_login_failed":
+                                toast.error("비밀번호를 확인하세요!", { theme: "colored" })
+                                localStorage.setItem("password", "")
+                                setBottom(<Step3 />)
+                                break
+                            
+                            case "wait_please":
+                                toast.error(`${err.response.data.minutes}분후에 재시도해주세요`, { theme: "colored" })
+                                setBottom(<Step3 />)
+                                break
+    
+                            case "wrong_password":
+                                toast.error("비밀번호를 확인하세요!", { theme: "colored" })
+                                localStorage.setItem("password", "")
+                                setBottom(<Step3 />)
+                                break
+
+                            default:
+                                toast.error("자가진단을 하지 못했어요. 다시 시도해주세요", { theme: "colored" })
+                                setBottom(<Step3 />)
+                                break
+                        }
+                    } else if (err.request) {
+                        toast.error("서버 연결에 실패했어요. 다시 시도해주세요", { theme: "colored" })
+                        setBottom(<Step3 />)
+                    } else {
+                        toast.error("문제가 생겼어요. ", { theme: "colored" })
+                        setBottom(<Step3 />)
+                    }
                 }
             })()
         }, [])
@@ -359,6 +336,27 @@ function App(props){
                     isAble: false,
                     function: null
                 })
+                // let count = 4
+                // const timer = setInterval(() => {
+                //     count = count - 1
+                //     if (count < 1) {
+                //         clearInterval(timer)
+                //         window.close()
+                //     }
+                //     setBtnStatus({
+                //         text: `${count}초 뒤에 창을 닫을게요`,
+                //         isAble: false,
+                //         function: () => {
+                //             clearInterval(timer)
+                //             window.close()
+                //             setBtnStatus({
+                //                 text: `자동 창 닫기를 취소했어요`,
+                //                 isAble: false,
+                //                 function: null
+                //             })
+                //         }
+                //     })
+                // }, 1000)
             }
         }, [props.isNew])
 
