@@ -3,9 +3,9 @@ import "../css/bar.scss"
 
 function Bar(props) {
     const [status, setStatus] = useState("")
-    const [text, setText] = useState("")
+    // const [text, setText] = useState("")
     useEffect(() => {
-        setText(props.text)
+        // setText(props.text)
         if (props.status === "main") {
             setStatus("Bar-diagonal")
         } else if (props.status === "setting-1") {

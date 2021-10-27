@@ -51,7 +51,7 @@ function App(props){
             })
             inputRef.current.focus();
             onInputChange(inputValue)
-        }, [])
+        }, [inputValue])
         
         const onInputChange = (value) => {
             setInputValue(value)
@@ -118,7 +118,7 @@ function App(props){
             })
             inputRef.current.focus();
             onInputChange(inputValue)
-        }, [])
+        }, [inputValue])
         
         const onInputChange = (value) => {
             setInputValue(value)
@@ -128,16 +128,26 @@ function App(props){
                     isAble: false,
                     function: null
                 })
-            } else if (/^0\d[01]\d[0123]\d$/.test(value)) {
-                setBtnStatus({
-                    text: `20${value.slice(0,2)}년 ${value.slice(2,4)}월 ${value.slice(4,6)}일`,
-                    isAble: true,
-                    function: () => {
-                        localStorage.setItem("birth", value)
-                        setBottom(<Step3 />)
-                    }
-                })
-                
+            } else if (/^\d\d[01]\d[0123]\d$/.test(value)) {
+                if (Number(value.substr(0, 2)) > 30) {
+                    setBtnStatus({
+                        text: `19${value.slice(0,2)}년 ${value.slice(2,4)}월 ${value.slice(4,6)}일`,
+                        isAble: true,
+                        function: () => {
+                            localStorage.setItem("birth", value)
+                            setBottom(<Step3 />)
+                        }
+                    })
+                } else {
+                    setBtnStatus({
+                        text: `20${value.slice(0,2)}년 ${value.slice(2,4)}월 ${value.slice(4,6)}일`,
+                        isAble: true,
+                        function: () => {
+                            localStorage.setItem("birth", value)
+                            setBottom(<Step3 />)
+                        }
+                    })
+                }
             } else {
                 setBtnStatus({
                     text: "정확한 생년월일을 입력하세요",
@@ -149,7 +159,7 @@ function App(props){
 
         const onEnter = (e) => {
             if (e.key === "Enter") {
-                if (/^0\d[01]\d[0123]\d$/.test(inputValue)) {
+                if (/^\d\d[01]\d[0123]\d$/.test(inputValue)) {
                     localStorage.setItem("birth", inputValue)
                     setBottom(<Step3 />)
                 }
@@ -184,7 +194,7 @@ function App(props){
             })
             inputRef.current.focus();
             onInputChange(inputValue)
-        }, [])
+        }, [inputValue])
         
         const onInputChange = (value) => {
             setInputValue(value)
@@ -306,7 +316,7 @@ function App(props){
                     }
                 }
             })()
-        }, [])
+        }, [props.isNew])
         
 
         return (
